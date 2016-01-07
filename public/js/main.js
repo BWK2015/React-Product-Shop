@@ -19020,54 +19020,118 @@ process.umask = function() { return 0; };
 
 },{}],159:[function(require,module,exports){
 var React = require('react');
-var ListItem = require('./ListItem');
 
-var ingredients = [{ "id": 1, "text": "ham" }, { "id": 2, "text": "cheese" }, { "id": 3, "text": "pickle" }];
+var NavItem = React.createClass({
+    displayName: "NavItem",
 
-var List = React.createClass({
-    displayName: 'List',
-
-    render: function () {
-        var ListItems = ingredients.map(function (item) {
-            return React.createElement(ListItem, { key: item.id, ingredient: item.text });
+    getInitialState: function () {
+        return {
+            hover: false
+        };
+    },
+    mouseOver: function () {
+        this.setState(function (prevState, props) {
+            return {
+                hover: true
+            };
         });
-
-        return React.createElement(
-            'ul',
-            null,
-            ListItems
-        );
-    }
-});
-
-module.exports = List;
-
-},{"./ListItem":160,"react":157}],160:[function(require,module,exports){
-var React = require('react');
-
-var ListItem = React.createClass({
-    displayName: 'ListItem',
-
+    },
+    mouseOut: function () {
+        this.setState(function (prevState, props) {
+            return {
+                hover: false
+            };
+        });
+    },
     render: function () {
         return React.createElement(
-            'li',
-            null,
+            "li",
+            { className: this.state.hover ? "active" : "", onMouseOver: this.mouseOver, onMouseOut: this.mouseOut },
             React.createElement(
-                'h4',
-                null,
-                this.props.ingredient
+                "a",
+                { href: this.props.href },
+                this.props.title
             )
         );
     }
 });
 
-module.exports = ListItem;
+module.exports = NavItem;
 
-},{"react":157}],161:[function(require,module,exports){
+},{"react":157}],160:[function(require,module,exports){
+var React = require('react');
+var NavItem = require('./navItem.jsx');
+
+var NavBar = React.createClass({
+    displayName: 'NavBar',
+
+    render: function () {
+        var NavStyle = {
+            WebkitBoxShadow: "0 0 4px rgba(0,0,0,0.4)",
+            MozBoxShadow: "0 0 4px rgba(0,0,0,0.4)",
+            BoxShadow: "0 0 4px rgba(0,0,0,0.4)",
+            borderRadius: 0
+        };
+        if (this.props.bgColor) {
+            NavStyle.background = this.props.bgColor;
+        };
+        var navItems = this.props.navData.map(function (item, index) {
+            return React.createElement(NavItem, { key: item.title + index, title: item.title, href: item.href });
+        });
+        return React.createElement(
+            'div',
+            null,
+            React.createElement(
+                'nav',
+                { style: NavStyle, className: 'navbar navbar-default' },
+                React.createElement(
+                    'div',
+                    { className: 'navbar-header' },
+                    React.createElement(
+                        'button',
+                        { type: 'button', className: 'navbar-toggle collapsed', 'data-toggle': 'collapse', 'data-target': '#nav-collapse' },
+                        React.createElement('span', { className: 'icon-bar' }),
+                        React.createElement('span', { className: 'icon-bar' }),
+                        React.createElement('span', { className: 'icon-bar' })
+                    ),
+                    React.createElement(
+                        'a',
+                        { className: 'navbar-brand', href: '#' },
+                        'Product Shop'
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'collapse navbar-collapse', id: 'nav-collapse' },
+                    React.createElement(
+                        'ul',
+                        { className: 'nav navbar-nav' },
+                        navItems
+                    )
+                )
+            )
+        );
+    }
+});
+
+module.exports = NavBar;
+
+},{"./navItem.jsx":159,"react":157}],161:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
-var List = require('./components/List');
+var NavBar = require('./components/nav/navbar.jsx');
 
-ReactDOM.render(React.createElement(List, null), document.getElementById('ingredients'));
+var NavLinks = [{
+    title: "Home",
+    href: "#"
+}, {
+    title: "Courses",
+    href: "#"
+}, {
+    title: "Blog",
+    href: "#"
+}];
 
-},{"./components/List":159,"react":157,"react-dom":1}]},{},[161]);
+ReactDOM.render(React.createElement(NavBar, { bgColor: '#FFF', titleColor: '#3097d1', navData: NavLinks }), document.getElementById('nav'));
+
+},{"./components/nav/navbar.jsx":160,"react":157,"react-dom":1}]},{},[161]);
